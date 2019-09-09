@@ -1,6 +1,6 @@
-" main file of the realcolors plugin for Vim {{{3
+" main file of the c0lor plugin for Vim {{{3
 " Author: Renato Fabbri
-" Date: 2018/May/12 (when I wrote this header)
+" Date: 2019/Sep/09 (when I rewrote this header)
 " Copyright: Public domain
 " Acknowledgments:
 " vim_use email list (discussion forum)
@@ -8,10 +8,10 @@
 " FAPESP (project 2017/05838-3)
 
 " Load Once: {{{3
-if exists("g:loaded_colorplugin") && (exists("g:color_not_hacking") || exists("g:prv_not_hacking_all"))
+if exists("g:loaded_c0lorplugin") && (exists("g:c0lor_not_hacking") || exists("g:prv_not_hacking_all"))
  finish
 endif
-let g:loaded_colorplugin = "v0.02b"
+let g:loaded_colorplugin = "v0.03b"
 let g:color_dir = expand("<sfile>:p:h:h") . '/'
 
 au ColorScheme * hi SpellBad cterm=undercurl
@@ -927,7 +927,7 @@ fu! MakeLRGBD() " {{{
   let bwg = [[0,0,0],[255,255,255],[128,128,128]]
   for c in mean_colors
     let cs_ = MkRotationFlipCS(c) + bwg
-    call add(l, cs_)
+    cal add(l, cs_)
   endfor
   let g:colors_all['cs']['lmean_doc'] = 'has bw and colors in between. should have precedence given by the bg'
   let g:colors_all['cs']['lmean'] = l

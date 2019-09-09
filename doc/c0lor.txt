@@ -1,49 +1,58 @@
-*color.txt*  Create and reuse colorschemes on the fly
+*c0lor.txt*  Create and reuse colorschemes on the fly
 
 ==============================================================================
-CONTENTS                                                    *color-index*
-                           *color*
+CONTENTS                                                    *c0lor-index*
+                           *c0lor*
 
-    1. Intro                                    |color-intro|
-        1.1. Usage                              |color-usage|
-        1.2. |color| help                    |color-help|
+    1. Intro                                    |c0lor-intro|
+        1.1. Usage                              |c0lor-usage|
+        1.2. |c0lor| help                    |c0lor-help|
 
-    2. Install                                  |color-install|
-             |color-install-recommended|  |aa-install-Vimball|
-             |color-install-root|  |color-prv|
+    2. Install                                  |c0lor-install|
+             |c0lor-install-recommended|  |aa-install-Vimball|
+             |c0lor-install-root|  |c0lor-prv|
 
-    3. Options, variables and general settings  |color-settings|
+    3. Options, variables and general settings  |c0lor-settings|
 
-    4. Mappings                                 |color-mappings|
+    4. Mappings                                 |c0lor-mappings|
 
-    5. Commands                                 |color-commands|
-             |color-main-commands|  |aa-util-commands|
+    5. Commands                                 |c0lor-commands|
+             |c0lor-main-commands|  |aa-util-commands|
 
-    6. Functions                                |color-functions|
-             |color-implementation|
+    6. Functions                                |c0lor-functions|
+             |c0lor-implementation|
 
-    7. Files                                    |color-files|
+    7. Files                                    |c0lor-files|
 
-    8. Final words                              |color-final-words|
-        8.1. Further work / Todo                |color-todo|
-        8.2. Disclaimer                         |color-disclaimer|
-        8.3. License                            |color-license|
-        8.4. Acknowledgements                   |color-ack|
-        8.5. Contact                            |color-contact|
+    8. Final words                              |c0lor-final-words|
+        8.1. Further work / Todo                |c0lor-todo|
+        8.2. Disclaimer                         |c0lor-disclaimer|
+        8.3. License                            |c0lor-license|
+        8.4. Acknowledgements                   |c0lor-ack|
+        8.5. Contact                            |c0lor-contact|
 
 
 ==============================================================================
-1. Intro                                                   *color-intro*
+1. Intro                                                   *c0lor-intro*
 
 It is very often the case when programmers and other heavy text-file users
 work daily for many hours. The colors with which text is read and written
-influence in their performance, as exposed e.g. in [1]. Moreover, by my own
+influence in their performance, as exposed e.g. in [1] (physiology), [2]
+(neurology) and [3,4] (performance). Moreover, by my own
 experience, the colors which I find pleasent vary drastically from one moment
 to another, and the choice of colors with which I am comfortable at the moment
 help greatly in the engagement and overall performance of a work session.
 
 The coloring of text is most represented, in this context, by what is called
-'syntax highlighting'.
+'syntax highlighting', and the colors used, the 'color schemes'.
+|c0lor| is a plugin to tweak and use color schemes.
+
+
+[1]: Effects of Four Psychological Primary Colors on GSR, Heart Rate and Respiration Rate Keith W. Jacobs, Frank E. Hustmyer, Jr., 1974, https://journals.sagepub.com/doi/abs/10.2466/pms.1974.38.3.763
+[2]: The effects of red and blue light on alertness and mood at night, The effects of red and blue light on alertness and mood at night B. Plitnick et al., https://journals.sagepub.com/doi/abs/10.1177/1477153509360887
+[3]: Red enhances human performance in contests, Russell A. Hill & Robert A. Barton, 2005, https://www.nature.com/articles/435293a
+[4]: Blue or Red? Exploring the Effect of Color on Cognitive Task Performances
+Ravi Mehta, Rui (Juliet), 2009, https://science.sciencemag.org/content/323/5918/1226.long
 
 ------------------------------------------------------------------------------
 1.1 Usage                                         *color-usage*

@@ -1,10 +1,10 @@
-plugin/realcolors.vim
-plugin/realcolors/cs.vim
-plugin/realcolors/dynamic.vim
-plugin/realcolors/mappings.vim
-plugin/realcolors/tools.vim
-plugin/realcolors/utils.vim
-plugin/realcolors/data/realcolorsVimballInfo.txt
+plugin/c0lor.vim
+plugin/c0lor/cs.vim
+plugin/c0lor/dynamic.vim
+plugin/c0lor/mappings.vim
+plugin/c0lor/tools.vim
+plugin/c0lor/utils.vim
+plugin/c0lor/data/realcolorsVimballInfo.txt
 
 function! MkRealcolorsVimball() " {{{
   " Load this function by visually selecting it, then
@@ -12,7 +12,7 @@ function! MkRealcolorsVimball() " {{{
   " Then run it while in this buffer with:
   " :call MkRealcolorsVimball()
   " to create the vimball
-  1,7MkVimball! realcolors
+  1,7MkVimball! c0lor
   echo 'Vimball for the Realcolors plugin has been written at current directory'
 endfu " }}}
 
@@ -119,13 +119,14 @@ realcolors plugin installed)
 You might also install realcolors with by visiting
 https://github.com/ttm/vim
 and copying these files:
-plugin/realcolors.vim
-plugin/realcolors/cs.vim
-plugin/realcolors/dynamic.vim
-plugin/realcolors/mappings.vim
-plugin/realcolors/tools.vim
-plugin/realcolors/utils.vim
-plugin/realcolors/data/realcolorsVimballInfo.txt
+plugin/c0lor.vim
+plugin/c0lor/cs.vim
+plugin/c0lor/dynamic.vim
+plugin/c0lor/mappings.vim
+plugin/c0lor/tools.vim
+plugin/c0lor/utils.vim
+plugin/c0lor/data/realcolorsVimballInfo.txt
 
 to your .vim/ or anywhere in you runtimepath.
 
+:::
