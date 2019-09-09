@@ -26,6 +26,12 @@ nn <leader>c<leader>c :cal CColor()<CR>
 nn <leader>cr :cal CRandColorApply()<CR>
 nn <leader>cR :cal CRandColorApply('b')<CR>
 
+let g:c0lor = {}
+let g:c0lor.paths = {}
+let g:c0lor.paths.dir = g:color_dir
+
+let g:c0lor.paths.script = g:c0lor.paths.dir . 'plugin/c0lor.vim'
+nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
 " Initialization and overall status update
 " COMMANDS: {{{1
 " -- MAIN: {{{3
