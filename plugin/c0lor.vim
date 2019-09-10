@@ -327,13 +327,9 @@ fu! CRandColorApply(...) " {{{3
   let g:asddsa =  a:
 endf
 " -- UTILS {{{2
-fu! CIsInitialized() " {{{3
- if exists("color.initialized")
-    retu 1
-  el
-    retu 0
-  en
-endf
+" -- utils info Generators {{{2
+" -- utils color Generators {{{2
+" -- utils colorscheme Generators {{{2
 fu! CHex(...) " {{{3
   " Return RGB in Hex notation: #RRGGBB
   " expects a list [r, g, b] with values in [0, 255]
@@ -358,6 +354,7 @@ fu! RealcolorsGrayScale(from,to,ncolors) " {{{3
   let colors = map(range(a:ncolors), "'#' . repeat(printf('%02x', a:from + v:val*walk/(a:ncolors - 1)), 3)")
   retu colors
 endf
+" utils exp {{{2
 fu! HiFile() " {{{3
   " Does a bad job... But the idea is good, enhance it! TTM
   " run to hightlight the buffer with the highlight output
@@ -371,6 +368,14 @@ fu! HiFile() " {{{3
         let i += 1
     endw
 endf
+" utils API {{{2
+fu! CIsInitialized() " {{{3
+ if exists("color.initialized")
+    retu 1
+  el
+    retu 0
+  en
+endf
 fu! CheckColor(c) " {{{3
   let c = copy(a:c)
   for i in range(len(c))
@@ -381,43 +386,6 @@ fu! CheckColor(c) " {{{3
     en
   endfo
   retu c
-endf
-fu! MkBlack() " {{{3
-  " starting syntax highlighting facilities
-  " 1) change the color of the char under cursor to black
-  " This mkBlack function and \z mapping is the main syntax highlighting debugger
-  "
-  " Debugger facility.
-  " Only changes the color of the syntax group under cursor to black
-  " and prints and creates useful variables
-  " Reload color scheme to undo. E.g.: :colo blue
-
-  let stack = map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
-  let stack_ = synstack(line('.'), col('.'))
-  let stack__ = map(synstack(line('.'), col('.')), 'synIDattr(v:val, "fg")')
-  ec stack
-  if len(stack) == 0
-    let name1 = 'Normal'
-  el
-    let name1 = stack[-1]
-  en
-
-  let stack2 = map(synstack(line('.'), col('.')), 'synIDattr(synIDtrans(v:val), "name")')
-  let stack2_ = map(synstack(line('.'), col('.')), 'synIDtrans(v:val)')
-  let stack2__ = map(synstack(line('.'), col('.')), 'synIDattr(synIDtrans(v:val), "fg")')
-  ec stack2
-  if len(stack2) == 0
-    let name2 = 'Normal'
-  el
-    let name2 = stack[-1]
-  en
-
-  exe 'hi' name2
-  exe 'hi' name2 'guifg=black'
-  ec 'hi' name2 'guibg=white'
-  ec 'hi' name1 'guibg=white'
-  colo
-  let s:you = l:
 endf
 fu! GetColors(which) " {{{3
   " Populates the s:colors dictionary with default (which=2), temp (1) and buffer (0) colors
@@ -478,6 +446,7 @@ fu! GetColors(which) " {{{3
   el  " buffer, should be updated whenever a color is manipulated
     let s:colors['buffer'] = l:
   en
+  let g:scolors = s:colors
 endf
 fu! IncrementColor(c, g) " {{{3
   " c='r', g='f' : color and foreground
@@ -827,6 +796,7 @@ fu! MkPallte12(pallete) " {{{
   " endwhile
   return colors
 endfu " }}}
+"
 fu! MaxDiff(colors) " {{{
   " Return a color that is maximally different from all the colors given
 endfu " }}}

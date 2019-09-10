@@ -45,8 +45,8 @@ help greatly in the engagement and overall performance of a work session.
 
 The coloring of text is most represented, in this context, by what is called
 'syntax highlighting', and the colors used, the 'color schemes'.
-|c0lor| is a plugin to tweak and use color schemes.
-
+|c0lor| is a plugin to tweak and use color schemes for
+harnessing... 
 
 [1]: Effects of Four Psychological Primary Colors on GSR, Heart Rate and Respiration Rate Keith W. Jacobs, Frank E. Hustmyer, Jr., 1974, https://journals.sagepub.com/doi/abs/10.2466/pms.1974.38.3.763
 [2]: The effects of red and blue light on alertness and mood at night, The effects of red and blue light on alertness and mood at night B. Plitnick et al., https://journals.sagepub.com/doi/abs/10.1177/1477153509360887
