@@ -32,6 +32,7 @@ nn <leader>cR :cal CRandColorApply('b')<CR>
 nn <leader>ci :cal CInit()<CR>
 " put correct from CStack2()
 nn <leader>cI :exe 'hi ' . CStack()[-1][-1]<CR>
+nn <leader>ca :cal CRandColorscheme()<CR>
 
 nn <leader>co :cal StandardColorsOrig()<CR>
 nn <leader>cO :cal MakeColorsWindow(3)<CR>
@@ -245,6 +246,16 @@ fu! CRandColorApply(...) " {{{3
   " Change current color randomly
   let g:asddsa =  a:
 endf
+fu! CRandColorscheme() " {{{3
+  let g:mfiles = split(system("ls " . g:c0lor.paths.dir . 'c0lors'), '\n')
+  cal filter(g:mfiles, 'v:val =~# ".*\.vim$"')
+  let ind = str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % (len(g:mfiles) - 1)
+  let cs = g:mfiles[ind]
+  exe 'so ' . g:c0lor.paths.dir . 'c0lors/' . cs
+  redraw
+  echon 'loaded colorscheme ' . substitute(cs, '\.vim$', '', '')
+endf
+
 " -- MAIN experimental {{{2
 fu! CColor() " {{{3
   ec 'Sketch. Nothing useful implemented in CColor() for an end-user'
