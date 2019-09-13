@@ -385,7 +385,7 @@ fu! CHex(...) " {{{3
      retu printf("#%02x%02x%02x", a:1, a:2, a:3)
   en
 endf
-fu! RealcolorsGrayScale(from,to,ncolors) " {{{3
+fu! CGrayScale(from,to,ncolors) " {{{3
   " nsteps = ncolors - 1
   let walk = a:to - a:from
   let colors = map(range(a:ncolors), "'#' . repeat(printf('%02x', a:from + v:val*walk/(a:ncolors - 1)), 3)")
