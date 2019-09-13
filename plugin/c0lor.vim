@@ -27,7 +27,7 @@ nn <leader>cc :cal CChange()<CR>
 nn <leader>cs :ec CStack()<CR>
 nn <leader>cS :ec CStack2()<CR>
 nn <leader>c<leader>c :cal CColor()<CR>
-nn <leader>cr :cal CRandColorApply()<CR>
+nn <leader>cr :cal CRandColorApply('f')<CR>
 nn <leader>cR :cal CRandColorApply('b')<CR>
 nn <leader>ci :cal CInit()<CR>
 " put correct from CStack2()
@@ -37,7 +37,7 @@ nn <leader>ca :cal CRandColorscheme()<CR>
 nn <leader>co :cal StandardColorsOrig()<CR>
 nn <leader>cO :cal MakeColorsWindow(3)<CR>
 nn <leader>c<leader>o :highlight<CR>
-nn <leader>c<leader>O :exe 'sp ' . g:c0lor.paths.dir . 'colors/'<CR>:exe 'sp ' . $VIMRUNTIME . '/colors/'<CR>
+nn <leader>c<leader>O :exe 'sp ' . g:c0lor.paths.dir . 'c0lors/'<CR>:exe 'sp ' . $VIMRUNTIME . '/colors/'<CR>
 " find more useful plugins to show defined syntax groups and their colors
 
 
@@ -245,6 +245,12 @@ let g:qwee = 'asdasd'
 fu! CRandColorApply(...) " {{{3
   " Change current color randomly
   let g:asddsa =  a:
+  if a:1 == 'b'
+    exe 'hi ' . CStack2() . ' guibg=' . CRandColor()
+  el
+    exe 'hi ' . CStack2() . ' guifg=' . CRandColor()
+  en
+
 endf
 fu! CRandColorscheme() " {{{3
   let g:mfiles = split(system("ls " . g:c0lor.paths.dir . 'c0lors'), '\n')
