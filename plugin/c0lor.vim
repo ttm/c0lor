@@ -13,6 +13,10 @@ if exists("g:loaded_c0lorplugin") && (exists("g:c0lor_not_hacking") || exists("g
 endif
 let g:loaded_colorplugin = "v0.03b"
 let g:color_dir = expand("<sfile>:p:h:h") . '/'
+let g:c0lor = {}
+let g:c0lor.paths = {}
+let g:c0lor.paths.dir = g:color_dir
+let g:c0lor.paths.script = g:c0lor.paths.dir . 'plugin/c0lor.vim'
 
 " au ColorScheme * hi SpellBad cterm=undercurl
 
@@ -21,23 +25,23 @@ let g:color_dir = expand("<sfile>:p:h:h") . '/'
 let g:mapleader = " "
 nn <leader>cc :cal CChange()<CR>
 nn <leader>cs :ec CStack()<CR>
-nn <leader>ci :cal CInit()<CR>
+nn <leader>cS :ec CStack2()<CR>
 nn <leader>c<leader>c :cal CColor()<CR>
 nn <leader>cr :cal CRandColorApply()<CR>
 nn <leader>cR :cal CRandColorApply('b')<CR>
+nn <leader>ci :cal CInit()<CR>
+" put correct from CStack2()
+nn <leader>cI :exe 'hi ' . CStack()[-1][-1]<CR>
 
 nn <leader>co :cal StandardColorsOrig()<CR>
 nn <leader>cO :cal MakeColorsWindow(3)<CR>
+nn <leader>c<leader>o :highlight<CR>
+nn <leader>c<leader>O :exe 'sp ' . g:c0lor.paths.dir . 'colors/'<CR>:exe 'sp ' . $VIMRUNTIME . '/colors/'<CR>
+" find more useful plugins to show defined syntax groups and their colors
 
-" MAPPINGS for colorscheme files: {{{1
 
+" MAPPINGS for making colorscheme files: {{{1
 nn <leader>cT :exe 'so ' . $VIMRUNTIME . '/colors/tools/check_colors.vim'<CR>
-
-let g:c0lor = {}
-let g:c0lor.paths = {}
-let g:c0lor.paths.dir = g:color_dir
-
-let g:c0lor.paths.script = g:c0lor.paths.dir . 'plugin/c0lor.vim'
 nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
 " Initialization and overall status update
 " COMMANDS: {{{1
@@ -121,10 +125,11 @@ fu! CChange() " {{{3
   let color = {'fg':[l:rgb, l:rgb_, l:fg], 'bg':[l:rgbb, l:rgbb_, l:bg]}
 
   let [fg_, bg_] = [fg, bg]
-  ec [fg_, bg_]
+  " ec [fg_, bg_]
   let c = 'char_placeholder'
   let who = 'fg'
-  ec 'initial colors are fg, bs:' fg bg
+  " ec 'initial colors are fg, bs:' fg bg
+  ec fg_ bg_ "| Command (h): "
   cal getchar(1)
   let emphn = 0
   let emph = ['bold', 'underline', 'bold,underline', 'NONE']
@@ -164,7 +169,7 @@ fu! CChange() " {{{3
         exe 'hi' name 'cterm=' . emph[emphn]
         let mcmd = ''
       elsei c == "h"
-        ec "~ help ~\n\nrewq gfds bvcx' to sweep color space (see :help color);\n'i p t' to Invert fg-bg, change emPhasis, toggle fg/bg;\n'N' to toggle selected and Normal groups;\n'h n' for Help quit/_next.\n(press any key)"
+        ec "~ help (Change Color tool, c0lor plugin) ~\n\nrewq gfds bvcx' to sweep RGB color space (see :help color);\n'i p t' to Invert fg-bg, change emPhasis, toggle fg/bg;\n'N' to toggle selected and Normal groups;\n'h n' for Help quit/_next.\n(press any key)"
         cal getchar()
         let mcmd = ''
       elsei who == 'fg'
@@ -186,6 +191,13 @@ fu! CChange() " {{{3
   endw
   let g:me = l:
   let g:mi = a:
+endf
+fu! CStack2() " {{{3
+  let name = CStack()[-1][-1]
+  if (len(name) == 0)
+    let name = 'Normal'
+  en
+  retu name
 endf
 fu! CStack() " {{{3
   " Show syntax highlighting groups for word under cursor
