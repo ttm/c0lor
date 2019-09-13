@@ -46,6 +46,7 @@ nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
 " Initialization and overall status update
 " COMMANDS: {{{1
 " -- MAIN: {{{3
+com! -nargs=1 -complete=customlist,GetCSs Colorscheme exe 'so ' . g:c0lor.paths.dir . 'c0lors/' . <q-args> . '.vim'
 " -- UTILS: {{{3
 " FUNCTIONS: {{{1
 " -- MAIN {{{2
@@ -818,7 +819,17 @@ fu! MkPalette12(pallete) " {{{
   " endwhile
   return colors
 endfu " }}}
-"
+" -- AUX complete {{{2
+
+fu! GetCSs(ArgLead, CmdLine, CursorPos) " {{{
+  let g:mcmd = "ls " . g:c0lor.paths.dir . 'c0lors'
+  let g:mfiles = split(system("ls " . g:c0lor.paths.dir . 'c0lors'), '\n')
+  cal filter(g:mfiles, 'v:val =~# "^' . a:ArgLead . '.*\.vim$"')
+  " cal filter(g:mfiles, 'v:val =~# "^' . a:ArgLead . '"')
+  cal map(g:mfiles, 'substitute(v:val,".vim$","", "g")')
+  " ec a:ArgLead . a:CmdLine . a:CursorPos
+  retu g:mfiles
+endfu
 fu! MaxDiff(colors) " {{{
   " Return a color that is maximally different from all the colors given
 endfu " }}}
