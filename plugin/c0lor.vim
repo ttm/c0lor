@@ -14,7 +14,7 @@ endif
 let g:loaded_colorplugin = "v0.03b"
 let g:color_dir = expand("<sfile>:p:h:h") . '/'
 
-au ColorScheme * hi SpellBad cterm=undercurl
+" au ColorScheme * hi SpellBad cterm=undercurl
 
 " MAPPINGS: {{{1
 " -- g:realcolors_leader hack, part 1 of 1 {{{3
@@ -25,6 +25,13 @@ nn <leader>ci :cal CInit()<CR>
 nn <leader>c<leader>c :cal CColor()<CR>
 nn <leader>cr :cal CRandColorApply()<CR>
 nn <leader>cR :cal CRandColorApply('b')<CR>
+
+nn <leader>co :cal StandardColorsOrig()<CR>
+nn <leader>cO :cal MakeColorsWindow(3)<CR>
+
+" MAPPINGS for colorscheme files: {{{1
+
+nn <leader>cT :exe 'so ' . $VIMRUNTIME . '/colors/tools/check_colors.vim'<CR>
 
 let g:c0lor = {}
 let g:c0lor.paths = {}
@@ -38,107 +45,6 @@ nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
 " -- UTILS: {{{3
 " FUNCTIONS: {{{1
 " -- MAIN {{{2
-fu! CColor() " {{{3
-  ec 'Sketch. Nothing useful implemented in CColor() for an end-user'
-  let l:c = 'char_placeholder'
-  let g:action = v:none
-  let g:sname = v:none
-  wh c != 'q'
-    ec 'type H for help, q to quit, else ciLs is implemented: '
-    let l:c = nr2char(getchar())
-    ec l:c
-    ec index(['c', 'L', 's'], l:c)
-    if l:c == 'H'
-      ec 'c is change'
-      ec 'i is init'
-      ec 'L is luck'
-      ec 's is (print) stack of syntax groups'
-    elsei l:c == 'i'
-      cal CInit()
-    elsei index(['c', 'L', 's'], l:c) >= 0
-      let g:action = l:c
-    en
-    if g:action != v:none
-      while l:c != 'q'
-        ec 'type H for help, q to quit, else cntslb is implemented: '
-        let l:c = nr2char(getchar())
-        if l:c == 'H'
-          ec 'c is cursor'
-          ec 'n is Normal'
-          ec 't is tab'
-          ec 's is spell'
-          ec 'l is status line'
-          ec 'b is number column'
-        elsei l:c == 'c'
-          let g:sname = CStack()[-1][-1]
-        elsei l:c == 'n'
-          let g:sname = 'Normal'
-        elsei l:c == 't'
-          wh l:c != 'q'
-            ec 'type H for help, q to quit, else tsf is implemented: '
-            let l:c = nr2char(getchar())
-            if l:c == 'H'
-              ec 't is TabLine'
-              ec 's is TabLineSel'
-              ec 'f is TabLineFill'
-            elsei index(['t', 's', 'f'], l:c) >= 0
-              let g:sname = 't'.l:c
-            en
-            if g:sname != v:none
-              let l:c = 'q'
-            en
-          endw
-        elsei l:c == 's'
-          let g:sname = 'SpellBad'
-        elsei l:c == 'l'
-          wh l:c != 'q'
-            ec 'type H for help, q to quit, else sntT is implemented: '
-            let l:c = nr2char(getchar())
-            if l:c == 'H'
-              ec 's is StatusLine'
-              ec 'n is StatusLineNC'
-              ec 't is StatusLineTerm'
-              ec 'T is StatusLineTermNC'
-            elsei index(['s', 'n', 't', 'T'], l:c) >= 0
-              let g:sname = 'l'.l:c
-            en
-            if g:sname != v:none
-              let l:c = 'q'
-            en
-          endw
-        elsei l:c == 'b'  " number column
-          wh l:c != 'q'
-            ec 'type H for help, q to quit, else nN is implemented: '
-            let l:c = nr2char(getchar())
-            if l:c == 'H'
-              ec 'n is LineNr'
-              ec 'N is CursorLineNr'
-            elsei index(['n', 'N'], l:c) >= 0
-              let g:sname = 'b'.l:c
-            en
-            if g:sname != v:none
-              let l:c = 'q'
-            en
-          endw
-        en
-        if g:sname != v:none
-          let l:c = 'q'
-        en
-      endw
-    en
-  endw
-  cal CCarryAction(g:action, g:sname)
-endf
-let g:color = {}
-let g:color.actions = {'y': 'yank', 'a': 'apply', 'c': 'change', 'L': 'luck',
-      \'s': 'stack', 'l': 'load', 'k': 'keep', 'i': 'init', 'h': 'hack', 'H': 'help'}
-let g:color.snames = {'n': 'Normal', 'tt': 'TabLine', 'ts': 'TabLineSel',
-      \'tf': 'TabLineFill', 'sb': 'Spellbad', 'sr': 'SpellRare',
-      \'nn': 'LineNr', 'nN': 'CursorLineNr', 'ls': 'StatusLine',
-      \'ln': 'StatusLineNC', 'lt': 'StatusLineTerm', 'lT': 'StatusLineTermNC'}
-fu! CCarryAction(action, sname)
-  let a = 4
-endf
 fu! CInit() " {{{3
   " Should initialize the whole coloring system.
   " If not only changing the color under cursor, should be used
@@ -326,9 +232,117 @@ fu! CRandColorApply(...) " {{{3
   " Change current color randomly
   let g:asddsa =  a:
 endf
+" -- MAIN experimental {{{2
+fu! CColor() " {{{3
+  ec 'Sketch. Nothing useful implemented in CColor() for an end-user'
+  let l:c = 'char_placeholder'
+  let g:action = v:none
+  let g:sname = v:none
+  wh c != 'q'
+    ec 'type H for help, q to quit, else ciLs is implemented: '
+    let l:c = nr2char(getchar())
+    ec l:c
+    ec index(['c', 'L', 's'], l:c)
+    if l:c == 'H'
+      ec 'c is change'
+      ec 'i is init'
+      ec 'L is luck'
+      ec 's is (print) stack of syntax groups'
+    elsei l:c == 'i'
+      cal CInit()
+    elsei index(['c', 'L', 's'], l:c) >= 0
+      let g:action = l:c
+    en
+    if g:action != v:none
+      while l:c != 'q'
+        ec 'type H for help, q to quit, else cntslb is implemented: '
+        let l:c = nr2char(getchar())
+        if l:c == 'H'
+          ec 'c is cursor'
+          ec 'n is Normal'
+          ec 't is tab'
+          ec 's is spell'
+          ec 'l is status line'
+          ec 'b is number column'
+        elsei l:c == 'c'
+          let g:sname = CStack()[-1][-1]
+        elsei l:c == 'n'
+          let g:sname = 'Normal'
+        elsei l:c == 't'
+          wh l:c != 'q'
+            ec 'type H for help, q to quit, else tsf is implemented: '
+            let l:c = nr2char(getchar())
+            if l:c == 'H'
+              ec 't is TabLine'
+              ec 's is TabLineSel'
+              ec 'f is TabLineFill'
+            elsei index(['t', 's', 'f'], l:c) >= 0
+              let g:sname = 't'.l:c
+            en
+            if g:sname != v:none
+              let l:c = 'q'
+            en
+          endw
+        elsei l:c == 's'
+          let g:sname = 'SpellBad'
+        elsei l:c == 'l'
+          wh l:c != 'q'
+            ec 'type H for help, q to quit, else sntT is implemented: '
+            let l:c = nr2char(getchar())
+            if l:c == 'H'
+              ec 's is StatusLine'
+              ec 'n is StatusLineNC'
+              ec 't is StatusLineTerm'
+              ec 'T is StatusLineTermNC'
+            elsei index(['s', 'n', 't', 'T'], l:c) >= 0
+              let g:sname = 'l'.l:c
+            en
+            if g:sname != v:none
+              let l:c = 'q'
+            en
+          endw
+        elsei l:c == 'b'  " number column
+          wh l:c != 'q'
+            ec 'type H for help, q to quit, else nN is implemented: '
+            let l:c = nr2char(getchar())
+            if l:c == 'H'
+              ec 'n is LineNr'
+              ec 'N is CursorLineNr'
+            elsei index(['n', 'N'], l:c) >= 0
+              let g:sname = 'b'.l:c
+            en
+            if g:sname != v:none
+              let l:c = 'q'
+            en
+          endw
+        en
+        if g:sname != v:none
+          let l:c = 'q'
+        en
+      endw
+    en
+  endw
+  cal CCarryAction(g:action, g:sname)
+endf
+let g:color = {}
+let g:color.actions = {'y': 'yank', 'a': 'apply', 'c': 'change', 'L': 'luck',
+      \'s': 'stack', 'l': 'load', 'k': 'keep', 'i': 'init', 'h': 'hack', 'H': 'help'}
+let g:color.snames = {'n': 'Normal', 'tt': 'TabLine', 'ts': 'TabLineSel',
+      \'tf': 'TabLineFill', 'sb': 'Spellbad', 'sr': 'SpellRare',
+      \'nn': 'LineNr', 'nN': 'CursorLineNr', 'ls': 'StatusLine',
+      \'ln': 'StatusLineNC', 'lt': 'StatusLineTerm', 'lT': 'StatusLineTermNC'}
+fu! CCarryAction(action, sname)
+  let a = 4
+endf
 " -- UTILS {{{2
 " -- utils info Generators {{{2
 " -- utils color Generators {{{2
+fu! CRandColor(...) " {{{3
+  " Return random RGB in Hex notation: #RRGGBB
+  py3 import random as r
+  py3 rgb = [r.randint(0,255) for i in range(3)]
+  retu CHex(py3eval("rgb"))
+endf
 " -- utils colorscheme Generators {{{2
 fu! CHex(...) " {{{3
   " Return RGB in Hex notation: #RRGGBB
@@ -341,20 +355,13 @@ fu! CHex(...) " {{{3
      retu printf("#%02x%02x%02x", a:1, a:2, a:3)
   en
 endf
-fu! CRandColor(...) " {{{3
-  " Return random RGB in Hex notation: #RRGGBB
-  py3 import random as r
-  py3 rgb = [r.randint(0,255) for i in range(3)]
-  retu CHex(py3eval("rgb"))
-endf
-
 fu! RealcolorsGrayScale(from,to,ncolors) " {{{3
   " nsteps = ncolors - 1
   let walk = a:to - a:from
   let colors = map(range(a:ncolors), "'#' . repeat(printf('%02x', a:from + v:val*walk/(a:ncolors - 1)), 3)")
   retu colors
 endf
-" utils exp {{{2
+" utils experimental {{{2
 fu! HiFile() " {{{3
   " Does a bad job... But the idea is good, enhance it! TTM
   " run to hightlight the buffer with the highlight output
@@ -450,7 +457,7 @@ fu! GetColors(which) " {{{3
 endf
 fu! IncrementColor(c, g) " {{{3
   " c='r', g='f' : color and foreground
-  GetColors()  " creates the dictionary in next line
+  GetColors(0)  " creates the dictionary in next line
   let s:colors[l:g][l:c] = (colors[l:g][l:c] + 16 ) % 256
   RefreshColors()  " should update the colors of the cursor position
 endf
@@ -474,7 +481,7 @@ fu! RefreshColors() " {{{3
   " apply c to current colorscheme
   let c = s:colors
   let g = s:ground
-  let fg_ = Hex(c[g],0,0)
+  let g:fg_ = Hex(c[g],0,0)
 endf
 fu! IncRGB(co, ch) " {{{3
   let co = a:co
@@ -607,6 +614,7 @@ fu! MakeColorsWindow(colors) " {{{3
   0read $VIMRUNTIME/rgb.txt
   " silent g/grey/d
   1
+  ec 'ignore errors'
   for w_ in l:nc
      if w_ == ''
        con
@@ -633,11 +641,11 @@ fu! MakeColorsWindow(colors) " {{{3
         exe 'hi col_' . w . '_wfg guifg=white guibg=' . w_
         exe 'hi col_' . w . '_bbg guifg=' . w_ . ' guibg=black'
         exe 'hi col_' . w . '_wbg guifg=' . w_ . ' guibg=white'
-        exe '%s/\s\s' . w__ . '$/' . printf("  %s Foreground, %s Background, %s Black FG, %s White FG, %s Black BG, %s White BG", w__, w__, w__, w__, w__, w__) . '/g'
-        cal matchadd('col_' . w . '_bfg', '\<' . w__ . ' Black FG\>', -1)
-        cal matchadd('col_' . w . '_wfg', '\<' . w__ . ' White FG\>', -1)
-        cal matchadd('col_' . w . '_bbg', '\<' . w__ . ' Black BG\>', -1)
-        cal matchadd('col_' . w . '_wbg', '\<' . w__ . ' White BG\>', -1)
+        exe '%s/\s\s' . w__ . '$/' . printf("  %s Foreground, %s Background, %s BFG, %s WFG, %s BBG, %s WBG", w__, w__, w__, w__, w__, w__) . '/g'
+        cal matchadd('col_' . w . '_bfg', '\<' . w__ . ' BFG\>', -1)
+        cal matchadd('col_' . w . '_wfg', '\<' . w__ . ' WFG\>', -1)
+        cal matchadd('col_' . w . '_bbg', '\<' . w__ . ' BBG\>', -1)
+        cal matchadd('col_' . w . '_wbg', '\<' . w__ . ' WBG\>', -1)
       el
         exe '%s/\s\s' . tolower(w__) . '$/'.printf("%s Foreground, %s Background", w, w).'/g'
       en
@@ -712,6 +720,8 @@ fu! StandardColors() " {{{3
   unl named_colors['']  " find out why I am getting this 000 '' color...
   let s:named_colors = named_colors
   let s:named_colors_ = named_colors_
+  let g:named_colors = named_colors
+  let g:named_colors_ = named_colors_
   cal ColorsNotFound()
   cal SpecialColors()
   q
@@ -761,7 +771,7 @@ fu! AfricanCS() " {{{
   let cs.exu = MkCS(palletes.exu_)
   " call ApplyCS(cs.exu
 endfu " }}}
-fu! MkPallte12(pallete) " {{{
+fu! MkPalette12(pallete) " {{{
   " return a 12 colors pallete from what comes
   " assuming pallete is a sequence of lists with three
   " values in [0,255] for rgb.
@@ -771,25 +781,25 @@ fu! MkPallte12(pallete) " {{{
     let sum = 0
     for c in color
       let sum += c
-    endfor
+    endfo
     let sum = sum/3
     let c_ = [color]
     let nder_ = 1
-    if sum > 128 " closer to white
-      while nder_ < nder
-        let color = GetShade(color, 0.5)
-        call add(c_, color)
+    if sum > 128 " closer to white, move to black
+      wh nder_ < nder
+        let color2 = GetShade(color2, 0.5)
+        cal add(c_, color2)
         let nder_ += 1
-      endwhile
-    else
-      while nder_ < nder
-        let color = GetTint(color, 0.5)
-        call add(c_, color)
+      endw
+    el " closer to black, move to white
+      wh nder_ < nder
+        let color2 = GetTint(color, 0.5)
+        cal add(c_, color2)
         let nder_ += 1
-      endwhile
-    endif
-    call extend(colors, c_)
-  endfor
+      endw
+    en
+    cal extend(colors, c_)
+  endfo
   " while len(colors) < 12
   "   let acolor = MaxDiff(colors)
   "   call add(colors, acolor)
