@@ -11,44 +11,46 @@
 if exists("g:loaded_c0lorplugin") && (exists("g:c0lor_not_hacking") || exists("g:prv_not_hacking_all"))
  finish
 endif
-let g:loaded_colorplugin = "v0.03b"
-let g:color_dir = expand("<sfile>:p:h:h") . '/'
+let g:loaded_c0lorplugin = "v0.03b"
+let g:c0lor_dir = expand("<sfile>:p:h:h") . '/'
 let g:c0lor = {}
 let g:c0lor.paths = {}
-let g:c0lor.paths.dir = g:color_dir
+let g:c0lor.paths.dir = g:c0lor_dir
 let g:c0lor.paths.script = g:c0lor.paths.dir . 'plugin/c0lor.vim'
 
 " au ColorScheme * hi SpellBad cterm=undercurl
 
 " MAPPINGS: {{{1
-" -- g:realcolors_leader hack, part 1 of 1 {{{3
+" -- c0los leader is <space> and commands start with c, change here: {{{3
 let g:mapleader = " "
-nn <leader>cc :cal CChange()<CR>
-nn <leader>cs :ec CStack()<CR>
-nn <leader>cS :ec CStack2()<CR>
-nn <leader>c<leader>c :cal CColor()<CR>
-nn <leader>cr :cal CRandColorApply('f')<CR>
-nn <leader>cR :cal CRandColorApply('b')<CR>
-nn <leader>ci :cal CInit()<CR>
-" put correct from CStack2()
-nn <leader>cI :exe 'hi ' . CStack()[-1][-1]<CR>
+nn <leader>c :cal CRandColorscheme()<CR>
 nn <leader>ca :cal CRandColorscheme()<CR>
-
+nn <leader>cc :cal CChange()<CR>
+nn <leader>ci :cal CInit()<CR>
+nn <leader>cg :cal ApplyCCS(Choose(keys(g:ccs)))<CR>
+" put correct from CStack2()
 nn <leader>co :cal StandardColorsOrig()<CR>
+nn <leader>cr :cal CRandColorApply('f')<CR>
+nn <leader>cs :ec CStack2b()<CR>
+
+nn <leader>cG :cal CommandColorSchemes()<CR>
+nn <leader>cI :exe 'hi ' . CStack2b()<CR>
 nn <leader>cO :cal MakeColorsWindow(3)<CR>
+nn <leader>cR :cal CRandColorApply('b')<CR>
+nn <leader>cS :ec CStack()<CR>
+
+nn <leader>c<leader>c :cal CColor()<CR>
 nn <leader>c<leader>o :highlight<CR>
 nn <leader>c<leader>O :exe 'sp ' . g:c0lor.paths.dir . 'c0lors/'<CR>:exe 'sp ' . $VIMRUNTIME . '/colors/'<CR>
 " find more useful plugins to show defined syntax groups and their colors
 
-
-" MAPPINGS for making colorscheme files: {{{1
+" MAPPINGS for making colorscheme files: {{{3
 nn <leader>cT :exe 'so ' . $VIMRUNTIME . '/colors/tools/check_colors.vim'<CR>
 nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
 " Initialization and overall status update
 " COMMANDS: {{{1
 " -- MAIN: {{{3
 com! -nargs=1 -complete=customlist,GetCSs Colorscheme exe 'so ' . g:c0lor.paths.dir . 'c0lors/' . <q-args> . '.vim'
-" -- UTILS: {{{3
 " FUNCTIONS: {{{1
 " -- MAIN {{{2
 fu! CInit() " {{{3
@@ -79,6 +81,7 @@ fu! CInit() " {{{3
   " and g:colors_all_ (new) global variables
   cal GetAll()
   cal StandardColorSchemes()
+  cal CommandColorSchemes()
   " ec "type \\x to change color under cursor"
   " ec " should be integrated to the mode <C-\ c>"
   let g:color = {'initialized': 1}
@@ -194,9 +197,21 @@ fu! CChange() " {{{3
   let g:me = l:
   let g:mi = a:
 endf
+fu! CStack2b() " {{{3
+  " a short version of CStack2()
+  let name = synIDattr(synIDtrans(synID(line("."), col("."), 1)), "name")
+  if len(name) == 0
+    let name = 'Normal'
+  en
+  retu name
+endf
 fu! CStack2() " {{{3
-  let name = CStack()[-1][-1]
-  if (len(name) == 0)
+  " just the last result of CStack()
+  let name = CStack()[-1]
+  if type(name) == 3
+    let name = name[-1]
+  en
+  if len(name) == 0
     let name = 'Normal'
   en
   retu name
@@ -227,19 +242,19 @@ fu! CStack() " {{{3
   en
   retu c
 endf
-fu! ApplyCS(pallete, method) " {{{3
-  " Apply a CS which should relate colors to groups
-  " if a:method == 'commands'
-    " let coms = a:cs_pallete.commands
-  if a:method =~ "^c.*"
-    let l:coms = a:pallete
-    if type(a:pallete) == 0
-      let l:coms = ['colo blue', 'hi Normal  guifg=#0fffe0 guibg=#03800b']
-    en
-    for c in l:coms
-      exe c
-    endfo
+fu! ApplyCCS(ccsname) " {{{3
+  " command color scheme in g:ccs, created by CommandColorSchemes
+  let l:coms = g:ccs[a:ccsname]
+  if type(a:ccsname) == 0
+    let l:coms = ['colo blue', 'hi Normal  guifg=#0fffe0 guibg=#03800b']
   en
+  for c in l:coms
+    exe c
+  endfo
+  redraw
+  ec 'command colorscheme loaded: '
+  ec a:ccsname
+  ec l:coms
 endf
 let g:qwee = 'asdasd'
 fu! CRandColorApply(...) " {{{3
@@ -259,7 +274,7 @@ fu! CRandColorscheme() " {{{3
   let cs = g:mfiles[ind]
   exe 'so ' . g:c0lor.paths.dir . 'c0lors/' . cs
   redraw
-  echon 'loaded colorscheme ' . substitute(cs, '\.vim$', '', '')
+  echo 'loaded c0lorscheme ' . substitute(cs, '\.vim$', '', '')
 endf
 
 " -- MAIN experimental {{{2
@@ -764,6 +779,16 @@ fu! SpecialColors() " {{{3
   let g:color_named = l:
 endf
 " -- AUX {{{2
+fu! Choose(alist) " {{{
+  if type(a:alist) == 4
+    let ind = str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % (len(keys(a:alist)) - 1)
+    let ind = keys(a:alist)[ind]
+  el
+    let ind = str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % (len(a:alist) - 1)
+  en
+  let c = a:alist[l:ind]
+  retu c
+endf " }}}
 fu! ParseOrixas() " {{{
   let f = readfile(expand('%:p:h') . '/data/orixas1.txt')
   let os = []
@@ -846,7 +871,7 @@ fu! GetCSs(ArgLead, CmdLine, CursorPos) " {{{
   cal map(g:mfiles, 'substitute(v:val,".vim$","", "g")')
   " ec a:ArgLead . a:CmdLine . a:CursorPos
   retu g:mfiles
-endfu
+endfu " }}}
 fu! MaxDiff(colors) " {{{
   " Return a color that is maximally different from all the colors given
 endfu " }}}
@@ -873,14 +898,11 @@ fu! CommandColorSchemes() " {{{
   let cs.redblackl = ['colo koehler', 'hi Normal guibg=#800000']
   let cs.passivepink1 = ['colo koehler', 'hi Normal guibg=#ff91af', 'hi Comment guifg=#888888', 'hi Identifier guifg=#bb7777', 'hi Constant guifg=#ffcccc', 'hi PreProc guifg=#888088', 'hi Special guifg=#8f3580', 'hi Type guifg=#508f60']
   
-  
   let cs.exu1 = cs.red4
   " exuX is for now starting with blood red:
   " https://en.wikipedia.org/wiki/Blood_red
   " g:color_named.blood
   " and then adding many other stuff.
-
-
 
   " Holy spirit: (many colors, each with a specific simbolism, look for them)
 
@@ -1316,7 +1338,7 @@ let g:color.colors = {'terracotta' : ['#e2725b'. '#edab9e'. '#ca4023'. '#d17d6b'
 " 
 " Indigo Higher Manas, or Spiritual Intelligence, Critical State called Air
 " 
-" Blue Auric Envelope,  Steam or Vapor
+" Blue Auric Envelope, Steam or Vapor
 " 
 " Green Lower Manas, or Animal Soul, Critical State
 " 
@@ -1349,7 +1371,7 @@ let g:color.colors = {'terracotta' : ['#e2725b'. '#edab9e'. '#ca4023'. '#d17d6b'
 " 
 " https://www.scienceofpeople.com/10-ways-color-affects-your-mood/
 " 
-" Maker miler pink (passive pink
+" Maker miler pink (passive pink)
 " 
 " color psychology:
 " http://www.arttherapyblog.com/online/color-psychology-psychologica-effects-of-colors/#.Wl87LnWnHQo

@@ -12,7 +12,7 @@ endif
 let g:colors_name = "yellow"
 hi Normal		guifg=red       	guibg=yellow
 hi NonText		guifg=blue
-hi comment		guifg=gray
+hi comment		guifg=SlateGray
 hi constant		guifg=blue
 hi identifier	        guifg=gray
 hi statement	        guifg=darkred
