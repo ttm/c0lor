@@ -7,6 +7,9 @@
 " Dra. Cristina Ferreira de Oliveira (VICG/ICMC/USP),
 " FAPESP (project 2017/05838-3)
 
+" paths:
+" ../README.md
+" ../doc/c0lor.txt
 " Load Once: {{{3
 if exists("g:loaded_c0lorplugin") && (exists("g:c0lor_not_hacking") || exists("g:prv_not_hacking_all"))
  finish
@@ -26,34 +29,37 @@ let g:mapleader = " "
 nn <leader>c :cal CRandColorscheme()<CR>
 nn <leader>ca :cal CRandColorscheme()<CR>
 nn <leader>cc :cal CChange()<CR>
+nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
 nn <leader>ci :cal CInit()<CR>
-nn <leader>cg :cal ApplyCCS(Choose(keys(g:ccs)))<CR>
-" put correct from CStack2()
+nn <leader>cl :cal CLoadColorscheme()<CR>
 nn <leader>co :cal StandardColorsOrig()<CR>
+nn <leader>cp :cal CCarryAction('p', 'c')<CR>
 nn <leader>cr :cal CRandColorApply('f')<CR>
-nn <leader>cs :ec CStack2b()<CR>
+nn <leader>cs :cal CSaveColorscheme()<CR>
+nn <leader>cw :ec CStack2b()<CR>
+nn <leader>cy :cal CCarryAction('y', 'c')<CR>
 
-nn <leader>cG :cal CommandColorSchemes()<CR>
+nn <leader>cA :cal ApplyCCS(Choose(keys(g:ccs)))<CR>
+nn <leader>cH :cal CInfo()<CR>
 nn <leader>cI :exe 'hi ' . CStack2b()<CR>
 nn <leader>cO :cal MakeColorsWindow(3)<CR>
 nn <leader>cR :cal CRandColorApply('b')<CR>
-nn <leader>cS :ec CStack()<CR>
+nn <leader>cW :ec CStack()<CR>
+nn <leader>cT :exe 'so ' . $VIMRUNTIME . '/colors/tools/check_colors.vim'<CR>
 
 nn <leader>c<leader>c :cal CColor()<CR>
 nn <leader>c<leader>o :highlight<CR>
 nn <leader>c<leader>O :exe 'sp ' . g:c0lor.paths.dir . 'c0lors/'<CR>:exe 'sp ' . $VIMRUNTIME . '/colors/'<CR>
-" find more useful plugins to show defined syntax groups and their colors
 
-" MAPPINGS for making colorscheme files: {{{3
-nn <leader>cT :exe 'so ' . $VIMRUNTIME . '/colors/tools/check_colors.vim'<CR>
-nn <leader>ch :exec 'vs ' . g:c0lor.paths.script<CR>
-" Initialization and overall status update
+" find more useful mappings to show defined syntax groups and their colors TTM
+
 " COMMANDS: {{{1
 " -- MAIN: {{{3
 com! -nargs=1 -complete=customlist,GetCSs Colorscheme exe 'so ' . g:c0lor.paths.dir . 'c0lors/' . <q-args> . '.vim'
 " FUNCTIONS: {{{1
 " -- MAIN {{{2
 fu! CInit() " {{{3
+  let g:c0lor.ground = s:ground
   " Should initialize the whole coloring system.
   " If not only changing the color under cursor, should be used
   let s:ground = 'fg'
@@ -71,20 +77,13 @@ fu! CInit() " {{{3
   " make named_colors0 and named_colors with the name of the colors:
   " 0: from documentation :h gui-colors
   " : from $VIMRUNTIME/rgb.txt
-  let s:cs = {}
-  let s:timers = []
-  let s:counters = range(10)
-  let s:ncounters = 0
-  let s:patterns = {}
-  let s:mpatterns = {'wave': 'call WavePattern()', 'std': 'call StandardPattern()', 'wobble': 'call Wobble()', 'silence': 'call BypassPattern'}
   " get all variables to the g:colors_all (new)
   " and g:colors_all_ (new) global variables
   cal GetAll()
   cal StandardColorSchemes()
   cal CommandColorSchemes()
-  " ec "type \\x to change color under cursor"
-  " ec " should be integrated to the mode <C-\ c>"
-  let g:color = {'initialized': 1}
+  let g:c0lor.initialized = 1
+  let g:c0lor.minit = l:
 endf 
 fu! CChange() " {{{3
   " should integrate bold italics and underline (strikeout?) TTM
@@ -197,6 +196,87 @@ fu! CChange() " {{{3
   let g:me = l:
   let g:mi = a:
 endf
+fu! IncRGB(co, ch) " {{{3
+  let co = a:co
+  let c = a:ch
+
+  if c == '1' " 0
+    let [co[0], co[1]] = [co[1], co[0]]
+  elsei c == '2'
+    let [co[1], co[2]] = [co[2], co[1]]
+  elsei c == '3'
+    let [co[0], co[2]] = [co[2], co[0]]
+  elsei c == '4'
+    let co = [co[2], co[0], co[1]]
+  elsei c == '5'
+    let co = [co[1], co[2], co[0]]
+  elsei c == 't'
+    let co[0] = 255 - co[0]
+    let co[1] = 255 - co[1]
+    let co[2] = 255 - co[2]
+  elsei c == 'r' " 1
+    let co[0] = (16 + co[0]) % 256
+  elsei c == 'g'
+    let co[1] = (16 + co[1]) % 256
+  elsei c == 'b'
+    let co[2] = (16 + co[2]) % 256
+  elsei c == 'R'
+    let co[0] = (240 + co[0]) % 256
+  elsei c == 'G'
+    let co[1] = (240 + co[1]) % 256
+  elsei c == 'B'
+    let co[2] = (240 + co[2]) % 256
+  elsei c == 'w' " 2
+    let co[0] = (1 + co[0]) % 256
+  elsei c == 'd'
+    let co[1] = (1 + co[1]) % 256
+  elsei c == 'c'
+    let co[2] = (1 + co[2]) % 256
+  elsei c == 'W'
+    let co[0] = (255 + co[0]) % 256
+  elsei c == 'D'
+    let co[1] = (255 + co[1]) % 256
+  elsei c == 'C'
+    let co[2] = (255 + co[2]) % 256
+  elsei c == 'e' " 3
+    let co[1] = (16 + co[1]) % 256
+    let co[2] = (16 + co[2]) % 256
+  elsei c == 'f'
+    let co[0] = (16 + co[0]) % 256
+    let co[2] = (16 + co[2]) % 256
+  elsei c == 'v'
+    let co[0] = (16 + co[0]) % 256
+    let co[1] = (16 + co[1]) % 256
+  elsei c == 'E'
+    let co[1] = (240 + co[1]) % 256
+    let co[2] = (240 + co[2]) % 256
+  elsei c == 'F'
+    let co[0] = (240 + co[0]) % 256
+    let co[2] = (240 + co[2]) % 256
+  elsei c == 'V'
+    let co[0] = (240 + co[0]) % 256
+    let co[1] = (240 + co[1]) % 256
+  elsei c == 'q' " 4
+    let co[1] = (1 + co[1]) % 256
+    let co[2] = (1 + co[2]) % 256
+  elsei c == 's'
+    let co[0] = (1 + co[0]) % 256
+    let co[2] = (1 + co[2]) % 256
+  elsei c == 'x'
+    let co[0] = (1 + co[0]) % 256
+    let co[1] = (1 + co[1]) % 256
+  elsei c == 'Q'
+    let co[1] = (255 + co[1]) % 256
+    let co[2] = (255 + co[2]) % 256
+  elsei c == 'S'
+    let co[0] = (255 + co[0]) % 256
+    let co[2] = (255 + co[2]) % 256
+  elsei c == 'X'
+    let co[0] = (255 + co[0]) % 256
+    let co[1] = (255 + co[1]) % 256
+  en
+  retu co
+endf
 fu! CStack2b() " {{{3
   " a short version of CStack2()
   let name = synIDattr(synIDtrans(synID(line("."), col("."), 1)), "name")
@@ -255,6 +335,7 @@ fu! ApplyCCS(ccsname) " {{{3
   ec 'command colorscheme loaded: '
   ec a:ccsname
   ec l:coms
+  let g:c0lor.ccsname = a:ccsname
 endf
 let g:qwee = 'asdasd'
 fu! CRandColorApply(...) " {{{3
@@ -273,8 +354,19 @@ fu! CRandColorscheme() " {{{3
   let ind = str2nr(matchstr(reltimestr(reltime()), '\v\.@<=\d+')[1:]) % (len(g:mfiles) - 1)
   let cs = g:mfiles[ind]
   exe 'so ' . g:c0lor.paths.dir . 'c0lors/' . cs
-  redraw
-  echo 'loaded c0lorscheme ' . substitute(cs, '\.vim$', '', '')
+  redr
+  ec 'loaded c0lorscheme ' . substitute(cs, '\.vim$', '', '')
+  let g:ccsname = cs
+endf
+
+fu! CSaveColorscheme(name) " {{{3
+  " colorscheme gets saved to ../c0lors/ folder
+  " load with :C[olorscheme]
+  let g:maa = a:
+  let g:mll = l:
+endf
+
+fu! CLoadColorscheme() " {{{3
 endf
 
 " -- MAIN experimental {{{2
@@ -376,7 +468,40 @@ let g:color.snames = {'n': 'Normal', 'tt': 'TabLine', 'ts': 'TabLineSel',
       \'tf': 'TabLineFill', 'sb': 'Spellbad', 'sr': 'SpellRare',
       \'nn': 'LineNr', 'nN': 'CursorLineNr', 'ls': 'StatusLine',
       \'ln': 'StatusLineNC', 'lt': 'StatusLineTerm', 'lT': 'StatusLineTermNC'}
+" :h synIDattr
+let g:c0lor.chars = [ "name", "font", "sp", "fg#", "bg#", "sp#", "bold", "italic", "reverse", "inverse", "standout", "underline", "undercurl", "strike"]
 fu! CCarryAction(action, sname)
+  if ( a:sname == 'c' ) || ( a:sname == 'p')
+    " yank cursor fg and bg
+    let iid = synIDtrans(synID(line("."), col("."), 1))
+  en
+  if a:action == 'y'
+    let g:c0lor.clip = {}
+    for i in g:c0lor.chars
+      let g:c0lor.clip[i] = synIDattr(l:iid, i)
+    endfo
+    let g:c0lor.clip.cbold = synIDattr(l:iid, 'bold', 'cterm')
+    let g:c0lor.clip.cunderline = synIDattr(l:iid, 'underline', 'cterm')
+  elsei a:action == 'p'
+    let hi = 'hi ' . CStack2b()
+    let c = g:c0lor.clip
+    let emph = ['bold', 'underline', 'bold,underline', 'NONE']
+    let cterm = l:emph[3]
+    if ( l:c.cbold == 1 ) && ( l:c.cunderline == 1 )
+      let l:cterm = l:emph[2]
+    elsei l:c.cunderline == 1
+      let l:cterm = l:emph[1]
+    elsei l:c.cbold == 1
+      let l:cterm = l:emph[0]
+    en
+    let hi = l:hi . ' cterm=' . l:cterm
+    if len(l:c["fg#"]) > 0
+      let hi = l:hi . ' guifg=' . l:c['fg#']
+    en
+    if len(l:c["bg#"]) > 0
+      let hi = l:hi . ' guibg=' . l:c['bg#']
+    en
+  en
   let a = 4
 endf
 " -- UTILS {{{2
@@ -406,6 +531,35 @@ fu! CGrayScale(from,to,ncolors) " {{{3
   let colors = map(range(a:ncolors), "'#' . repeat(printf('%02x', a:from + v:val*walk/(a:ncolors - 1)), 3)")
   retu colors
 endf
+fu! MakeLRGBD() " {{{3
+  let mean_colors = [[255, 128, 0],
+                   \ [0, 255, 128],
+                   \ [128, 0, 255],
+                   \ [0, 128, 255],
+                   \ [255, 0, 128],
+                   \ [128, 255, 0]]
+  let l = []
+  let bwg = [[0,0,0],[255,255,255],[128,128,128]]
+  for c in mean_colors
+    let cs_ = MkRotationFlipCS(c) + bwg
+    cal add(l, cs_)
+  endfor
+  let g:colors_all['cs']['lmean_doc'] = 'has bw and colors in between. should have precedence given by the bg'
+  let g:colors_all['cs']['lmean'] = l
+endfu
+fu! MkRotationFlipCS(color) " {{{3
+  let c = a:color
+  let f = [255 - c[0], 255 - c[1], 255 - c[2]]
+  let cs =   [c,
+           \ [c[2], c[0], c[1]],
+           \ [c[1], c[2], c[0]],
+           \  f,
+           \ [f[2], f[0], f[1]],
+           \ [f[1], f[2], f[0]]
+           \ ]
+  return cs
+endfu
+
 " utils experimental {{{2
 fu! HiFile() " {{{3
   " Does a bad job... But the idea is good, enhance it! TTM
@@ -500,114 +654,12 @@ fu! GetColors(which) " {{{3
   en
   let g:scolors = s:colors
 endf
-fu! IncrementColor(c, g) " {{{3
-  " c='r', g='f' : color and foreground
-  GetColors(0)  " creates the dictionary in next line
-  let s:colors[l:g][l:c] = (colors[l:g][l:c] + 16 ) % 256
-  RefreshColors()  " should update the colors of the cursor position
-endf
 fu! GetAll() " {{{3
   let g:colors_all = s:
   let g:colors_all_ = []
   for vkey in keys(s:)
     cal add(g:colors_all_ , vkey)
   endfo
-endf
-fu! SwitchGround() " {{{3
-  " To keep a record in our color server
-  if s:ground == 'fg'
-    s:ground = 'bg'
-  el
-    s:ground = 'fg'
-  en
-endf
-fu! RefreshColors() " {{{3
-  " to do what???
-  " apply c to current colorscheme
-  let c = s:colors
-  let g = s:ground
-  let g:fg_ = Hex(c[g],0,0)
-endf
-fu! IncRGB(co, ch) " {{{3
-  let co = a:co
-  let c = a:ch
-
-  if c == '1' " 0
-    let [co[0], co[1]] = [co[1], co[0]]
-  elsei c == '2'
-    let [co[1], co[2]] = [co[2], co[1]]
-  elsei c == '3'
-    let [co[0], co[2]] = [co[2], co[0]]
-  elsei c == '4'
-    let co = [co[2], co[0], co[1]]
-  elsei c == '5'
-    let co = [co[1], co[2], co[0]]
-  elsei c == 't'
-    let co[0] = 255 - co[0]
-    let co[1] = 255 - co[1]
-    let co[2] = 255 - co[2]
-  elsei c == 'r' " 1
-    let co[0] = (16 + co[0]) % 256
-  elsei c == 'g'
-    let co[1] = (16 + co[1]) % 256
-  elsei c == 'b'
-    let co[2] = (16 + co[2]) % 256
-  elsei c == 'R'
-    let co[0] = (240 + co[0]) % 256
-  elsei c == 'G'
-    let co[1] = (240 + co[1]) % 256
-  elsei c == 'B'
-    let co[2] = (240 + co[2]) % 256
-  elsei c == 'w' " 2
-    let co[0] = (1 + co[0]) % 256
-  elsei c == 'd'
-    let co[1] = (1 + co[1]) % 256
-  elsei c == 'c'
-    let co[2] = (1 + co[2]) % 256
-  elsei c == 'W'
-    let co[0] = (255 + co[0]) % 256
-  elsei c == 'D'
-    let co[1] = (255 + co[1]) % 256
-  elsei c == 'C'
-    let co[2] = (255 + co[2]) % 256
-  elsei c == 'e' " 3
-    let co[1] = (16 + co[1]) % 256
-    let co[2] = (16 + co[2]) % 256
-  elsei c == 'f'
-    let co[0] = (16 + co[0]) % 256
-    let co[2] = (16 + co[2]) % 256
-  elsei c == 'v'
-    let co[0] = (16 + co[0]) % 256
-    let co[1] = (16 + co[1]) % 256
-  elsei c == 'E'
-    let co[1] = (240 + co[1]) % 256
-    let co[2] = (240 + co[2]) % 256
-  elsei c == 'F'
-    let co[0] = (240 + co[0]) % 256
-    let co[2] = (240 + co[2]) % 256
-  elsei c == 'V'
-    let co[0] = (240 + co[0]) % 256
-    let co[1] = (240 + co[1]) % 256
-  elsei c == 'q' " 4
-    let co[1] = (1 + co[1]) % 256
-    let co[2] = (1 + co[2]) % 256
-  elsei c == 's'
-    let co[0] = (1 + co[0]) % 256
-    let co[2] = (1 + co[2]) % 256
-  elsei c == 'x'
-    let co[0] = (1 + co[0]) % 256
-    let co[1] = (1 + co[1]) % 256
-  elsei c == 'Q'
-    let co[1] = (255 + co[1]) % 256
-    let co[2] = (255 + co[2]) % 256
-  elsei c == 'S'
-    let co[0] = (255 + co[0]) % 256
-    let co[2] = (255 + co[2]) % 256
-  elsei c == 'X'
-    let co[0] = (255 + co[0]) % 256
-    let co[1] = (255 + co[1]) % 256
-  en
-  retu co
 endf
 fu! StandardColorsOrig() " {{{3
   "  Shows the named colors available as fg and bg against default fg and bg    
@@ -862,7 +914,6 @@ fu! MkPalette12(pallete) " {{{
   return colors
 endfu " }}}
 " -- AUX complete {{{2
-
 fu! GetCSs(ArgLead, CmdLine, CursorPos) " {{{
   let g:mcmd = "ls " . g:c0lor.paths.dir . 'c0lors'
   let g:mfiles = split(system("ls " . g:c0lor.paths.dir . 'c0lors'), '\n')
@@ -939,7 +990,7 @@ fu! StandardColorSchemes() " {{{
   " EERGB PPRGB Double Web-Fech and Stev laws
   " Arbitrary series or rgb or final frequency
 endf " }}}
-fu! AppyCS2(cs) " {{{
+fu! ApplyCS2(cs) " {{{
   " Most basic: 1 bg + 8fg + 3fg = 12 colors
   " Basic grouping of them?
   " Basic partitioning of them?
@@ -958,37 +1009,10 @@ fu! AppyCS2(cs) " {{{
   hi Error gui=reverse
   hi Todo guifg=black guibg=white
 endf " }}}
-fu! MakeLRGBD() " {{{
-  let mean_colors = [[255, 128, 0],
-                   \ [0, 255, 128],
-                   \ [128, 0, 255],
-                   \ [0, 128, 255],
-                   \ [255, 0, 128],
-                   \ [128, 255, 0]]
-  let l = []
-  let bwg = [[0,0,0],[255,255,255],[128,128,128]]
-  for c in mean_colors
-    let cs_ = MkRotationFlipCS(c) + bwg
-    cal add(l, cs_)
-  endfor
-  let g:colors_all['cs']['lmean_doc'] = 'has bw and colors in between. should have precedence given by the bg'
-  let g:colors_all['cs']['lmean'] = l
-endfu " }}}
+
 fu! Warp(where, distortion) " {{{
   " Make cs more white or black or gray or tend
   " to a specific color
-endfu " }}}
-fu! MkRotationFlipCS(color) " {{{
-  let c = a:color
-  let f = [255 - c[0], 255 - c[1], 255 - c[2]]
-  let cs =   [c,
-           \ [c[2], c[0], c[1]],
-           \ [c[1], c[2], c[0]],
-           \  f,
-           \ [f[2], f[0], f[1]],
-           \ [f[1], f[2], f[0]]
-           \ ]
-  return cs
 endfu " }}}
 fu! GetShade(color, factor) " {{{
   " new intensity = current intensity * (1 – shade factor)
@@ -1017,12 +1041,38 @@ endfu " }}}
 " Anti-shade is a tint? an anti-tint is a shade?
 " An anti-tone is a what?
 " -- EXP {{{2
-function! InitializeDynamics() " {{{3
+fu! IncrementColor(c, g) " {{{3
+  " c='r', g='f' : color and foreground
+  GetColors(0)  " creates the dictionary in next line
+  let s:colors[l:g][l:c] = (colors[l:g][l:c] + 16 ) % 256
+  RefreshColors()  " should update the colors of the cursor position
+endf
+fu! SwitchGround() " {{{3
+  " To keep a record in our color server
+  if s:ground == 'fg'
+    s:ground = 'bg'
+  el
+    s:ground = 'fg'
+  en
+endf
+fu! RefreshColors() " {{{3
+  " to do what???
+  " apply c to current colorscheme
+  let c = s:colors
+  let g = s:ground
+  let g:fg_ = Hex(c[g],0,0)
+endf
+fu! InitializeDynamics() " {{{3
   " to keep track of the tickers___:
+  let s:timers = []
+  let s:counters = range(10)
+  let s:ncounters = 0
+  let s:patterns = {}
+  let s:mpatterns = {'wave': 'call WavePattern()', 'std': 'call StandardPattern()', 'wobble': 'call Wobble()', 'silence': 'call BypassPattern'}
   cal timer_stopall()
   let s:tickerids = []
 endf
-function! TickColor(timer) " {{{3
+fu! TickColor(timer) " {{{3
   let s:anum = 0
   let s:tick = 1
   " default:
@@ -1033,11 +1083,11 @@ function! TickColor(timer) " {{{3
     let s:anum += 1
   endwhile
 endfunc
-function! StartTick() " {{{3
+fu! StartTick() " {{{3
   s:tickerids.push( timer_start(400, TickColor(), {'repeat': 3}) )
 endfunction
 """"""""""""""""""" {{{3 Minimal Patterner
-func! MyHandler(timer)
+fu! MyHandler(timer)
   echo 'Handler called' s:i
   let s:i += 1
 endfunc
@@ -1054,7 +1104,7 @@ endfu
 " one calls the other to repeat n times.
 " displacement/offset might be performed with repeat=1, period=silence)
 " pattern(offset=2000, repeat=4, period=500)
-func! MyHandler2(offset, timer, makeoffset)
+fu! MyHandler2(offset, timer, makeoffset)
   echo 'Handler called' s:counters
   if a:makeoffset == 1
     call MyHandler2(a:offset, 1, )
@@ -1072,44 +1122,36 @@ fu! StandardPattern()
   let s:counters[s:ncounters] += s:ncounters
   let s:ncounters = (s:ncounters + 1) % len(s:counters)
 endf
-
 fu! BypassPattern()
   " for silence
   let foo = 'bar'
 endf
-
 fu! Pattern1(value)
   let s:counters[a:value] += a:value
 endf
-
 fu! WavePattern()
   call Voice(100, 20, 'std')
   call Voice(1, 1000, 'silence')
   call Voice(100, 20, 'std')
 endf
-
-function! Wobble(nlines)
+fu! Wobble(nlines)
   " Make curent line and next ones wobble
   let i = 0
   let mstart = system("echo $RANDOM")
-  while i < nlines
+  wh i < nlines
     exec line('.')+i . 'center' 30+(i*1+mstart)%80
     let i += 1
-  endwhile
-endfunc
-
+  endw
+endf
 fu! PWobble()
   " let timer = timer_start(500, 'Wobble')
   " let timer = timer_start(500, 'Wobble',
   "      			\ {'repeat': a:repeat})
-  call Voice(3, 200, 'Wobble(5)')
+  cal Voice(3, 200, 'Wobble(5)')
 endf
-
 fu! OverallPattern()
-  call Voice(-1, 2000, 'PWobble')
+  cal Voice(-1, 2000, 'PWobble')
 endf
-
-
 fu! MyHandler3(timerID)
   " a:timer is the number of repeats.
   " the duration is set by MyTimer3(timer=a:timer, duration=XXX)
@@ -1200,7 +1242,7 @@ let g:color.colors = {'terracotta' : ['#e2725b'. '#edab9e'. '#ca4023'. '#d17d6b'
 " Script minimal documentation {{{
 " most advanced run: 
 " basic run: \z to create color variables based on the cursor position
-" and \x to change color under cursor.
+" and \c to change color under cursor.
 " MakeColorsWindow dont match colors in the window made by running colors.vim
 "
 " All commands are in <C-\> namespace and are valid for all modes.
@@ -1247,6 +1289,7 @@ let g:color.colors = {'terracotta' : ['#e2725b'. '#edab9e'. '#ca4023'. '#d17d6b'
 " /usr/local/share/vim/vim80/doc/syntax.txt
 " * For the preferred and minor groups
 " }}}
+
 
 " TODO {{{
 " * Account for coloring that does not appear with <c-\> s as is: search

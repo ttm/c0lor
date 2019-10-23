@@ -49,7 +49,7 @@ The coloring of text is most represented, in this context, by what is called
 harnessing... 
 
 [1]: Effects of Four Psychological Primary Colors on GSR, Heart Rate and Respiration Rate Keith W. Jacobs, Frank E. Hustmyer, Jr., 1974, https://journals.sagepub.com/doi/abs/10.2466/pms.1974.38.3.763
-[2]: The effects of red and blue light on alertness and mood at night, The effects of red and blue light on alertness and mood at night B. Plitnick et al., https://journals.sagepub.com/doi/abs/10.1177/1477153509360887
+[2]: The effects of red and blue light on alertness and mood at night, The effects of red and blue light on alertness and mood at night B. Plitnick et al., 2010, https://journals.sagepub.com/doi/abs/10.1177/1477153509360887
 [3]: Red enhances human performance in contests, Russell A. Hill & Robert A. Barton, 2005, https://www.nature.com/articles/435293a
 [4]: Blue or Red? Exploring the Effect of Color on Cognitive Task Performances
 Ravi Mehta, Rui (Juliet), 2009, https://science.sciencemag.org/content/323/5918/1226.long
@@ -133,6 +133,10 @@ command in vimrc or with |color-leader-p| (preserve, persist).
 
 ------------------------------------------------------------------------------
 8.1. Todo                                       *color-todo*
+
+* make colorschemes for character names, such as elflord: ogre (green, red
+  black)
+* 
 
 ------------------------------------------------------------------------------
 8.2. Disclaimer                                       *color-disclaimer*
