@@ -6,8 +6,8 @@ cloning this repository and linking files locally.
 
     $ git clone https://github.com/ttm/c0lor
     $ cd c0lor
-    $ sudo pip3 install -e ./plugin/c0lor/
-    $ ln -s ./ ~/.vim/pack/prv/opt/c0lor
+    $ sudo pip3 install -e ./plugin/c0lor/  # not needed now, dummy package without setup.py
+    $ ln -s "$(pwd)" ~/.vim/pack/prv/opt/c0lor
 
 the name 'prv' of the directory (between pack and opt directories) is what I use for the plugins I made, you are welcome to use it to.
 

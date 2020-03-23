@@ -544,6 +544,8 @@ fu! MakeLRGBD() " {{{3
     let cs_ = MkRotationFlipCS(c) + bwg
     cal add(l, cs_)
   endfor
+  " added instantiation of dict because it was not found (23/03/2020):
+  let g:colors_all['cs'] = {}
   let g:colors_all['cs']['lmean_doc'] = 'has bw and colors in between. should have precedence given by the bg'
   let g:colors_all['cs']['lmean'] = l
 endfu
