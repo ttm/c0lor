@@ -59,11 +59,13 @@ com! -nargs=1 -complete=customlist,GetCSs Colorscheme exe 'so ' . g:c0lor.paths.
 " FUNCTIONS: {{{1
 " -- MAIN {{{2
 fu! CInit() " {{{3
-  let g:c0lor.ground = s:ground
   " Should initialize the whole coloring system.
   " If not only changing the color under cursor, should be used
   let s:ground = 'fg'
+  let g:c0lor.ground = s:ground
+  " disabled because rgb.txt was not found!!
   cal StandardColors()
+
   " creates the dictionary with colors on foreground and background
   " default, temporary and buffer in s:dcoulorsd, s:tcolorsd and s:colors
   let s:colors = {}
@@ -786,7 +788,8 @@ fu! StandardColors() " {{{3
   cal clearmatches()
   new
   setl buftype=nofile bufhidden=hide noswapfile
-  sil 0read $VIMRUNTIME/rgb.txt
+  let fn = g:c0lor_dir . 'plugin/data/rgb.txt'
+  exe 'sil 0read ' .  fn
   " - Delete lines where color name is not a single word (duplicates).
   " - Delete "grey" lines (duplicate "gray"; there are a few more "gray").
   "   TTM ??

@@ -18,12 +18,11 @@ hi preproc          guifg=darkgreen
 hi type             guifg=darkyellow
 hi special          guifg=#9999ee
 hi underlined       guifg=#ff00ff
-hi label            guifg=yellow        cterm=bold
+hi label            guifg=brown        cterm=bold
 hi operator         guifg=darkgreen
 
 hi directory         guifg=#a600bb      cterm=bold
 hi cursorline        guibg=#ffffdd
-hi CursorColumn      guibg=#ffff00
 
 hi errormsg         guifg=orange        guibg=darkBlue
 hi warningmsg       guifg=cyan          guibg=darkBlue
@@ -38,6 +37,9 @@ hi incsearch        guifg=black         guibg=yellow
 hi linenr           guifg=#ffaaaa
 hi cursorlinenr     guifg=lightred
 hi title            guifg=white
+
+hi moremsg          guifg=darkgreen     guibg=white
+hi modemsg          guifg=black
 
 " inverted fb-bg by Vim's defaults:
 hi statuslinenc     guifg=white         guibg=blue

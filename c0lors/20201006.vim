@@ -3,27 +3,26 @@ hi clear
 if exists("syntax_on")
   syntax reset
 endif
-let g:colors_name = "09062020"
+let g:colors_name = "10062020"
 
-let @r = ':w:C 09062020'
+let @r = ':w:C 10062020'
 let @f = ':aguifg=#'
 
-hi normal           guifg=#0fa3bf       guibg=#ffffaa       cterm=bold
+hi normal           guifg=#0fa3bf       guibg=#ffddaa       cterm=bold
 hi nontext          guifg=magenta
-hi comment          guifg=#f4aaaa       cterm=bold
-hi constant         guifg=#bbbbbb
+hi comment          guifg=#ff8888       cterm=bold
+hi constant         guifg=#aaaaaa
 hi identifier       guifg=lightred
 hi statement        guifg=#a580ff
 hi preproc          guifg=darkgreen
 hi type             guifg=darkyellow
 hi special          guifg=#9999ee
 hi underlined       guifg=#ff00ff
-hi label            guifg=yellow        cterm=bold
+hi label            guifg=brown        cterm=bold
 hi operator         guifg=darkgreen
 
 hi directory         guifg=#a600bb      cterm=bold
 hi cursorline        guibg=#ffffdd
-hi CursorColumn      guibg=#ffff00
 
 hi errormsg         guifg=orange        guibg=darkBlue
 hi warningmsg       guifg=cyan          guibg=darkBlue
@@ -38,6 +37,9 @@ hi incsearch        guifg=black         guibg=yellow
 hi linenr           guifg=#ffaaaa
 hi cursorlinenr     guifg=lightred
 hi title            guifg=white
+
+hi moremsg          guifg=darkgreen     guibg=white
+hi modemsg          guifg=black
 
 " inverted fb-bg by Vim's defaults:
 hi statuslinenc     guifg=white         guibg=blue
